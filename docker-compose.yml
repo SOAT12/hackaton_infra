@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # O MongoDB a correr diretamente na EC2
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  # API de Diagramas
+  diagram-api:
+    image: hackaton-diagram-api:latest
+    container_name: diagram-api
+    ports:
+      - "8080:8080"
+    environment:
+      # Preencher com os outputs do Terraform
+      - DB_URL=jdbc:postgresql://<SUBSTITUIR_PELO_ENDPOINT_RDS>:5432/diagram_db
+      - DB_USERNAME=diagram_api
+      - DB_PASSWORD=diagramdbpass
+      - SQS_PROCESS_URL=<SUBSTITUIR_PELA_URL_DA_FILA_PROCESS>
+      - SQS_STATUS_URL=<SUBSTITUIR_PELA_URL_DA_FILA_STATUS>
+      # Credenciais AWS para ter acesso às filas SQS e S3 (se não usar IAM Role na EC2)
+      - AWS_ACCESS_KEY_ID=<SUA_ACCESS_KEY>
+      - AWS_SECRET_ACCESS_KEY=<SUA_SECRET_KEY>
+      - AWS_SESSION_TOKEN=<SEU_SESSION_TOKEN>
+    depends_on:
+      - mongodb
+    restart: always
+
+  # API de Relatórios
+  report-api:
+    image: hackaton-report-api:latest
+    container_name: report-api
+    ports:
+      - "8081:8080"
+    environment:
+      # Liga-se ao Mongo local deste docker-compose
+      - MONGODB_URI=mongodb://mongodb:27017/report_db
+      - AWS_REGION=us-east-1
+      - AWS_S3_BUCKET_NAME=<SUBSTITUIR_PELO_NOME_DO_BUCKET_S3>
+      - AWS_SQS_STATUS_UPDATE_QUEUE_URL=<SUBSTITUIR_PELA_URL_DA_FILA_STATUS>
+      - AWS_ACCESS_KEY_ID=<SUA_ACCESS_KEY>
+      - AWS_SECRET_ACCESS_KEY=<SUA_SECRET_KEY>
+      - AWS_SESSION_TOKEN=<SEU_SESSION_TOKEN>
+    depends_on:
+      - mongodb
+    restart: always
+
+volumes:
+  mongo_data:
