@@ -9,3 +9,9 @@ resource "aws_ecr_repository" "report_api" {
   image_tag_mutability = "MUTABLE"
   force_delete         = true
 }
+
+resource "aws_ecr_repository" "processor_api" {
+  name                 = "hackaton-processor-api"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+}
