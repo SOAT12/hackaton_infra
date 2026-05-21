@@ -9,7 +9,7 @@ resource "aws_apigatewayv2_api" "http_api" {
 resource "aws_apigatewayv2_integration" "diagram_api" {
   api_id             = aws_apigatewayv2_api.http_api.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${aws_instance.app_server.public_ip}:8080"
+  integration_uri    = "http://${aws_eip.app_eip.public_ip}:8080"
   integration_method = "ANY"
 }
 
@@ -27,7 +27,7 @@ resource "aws_apigatewayv2_route" "default_route" {
 resource "aws_apigatewayv2_integration" "report_api" {
   api_id             = aws_apigatewayv2_api.http_api.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${aws_instance.app_server.public_ip}:8081"
+  integration_uri    = "http://${aws_eip.app_eip.public_ip}:8081"
   integration_method = "ANY"
 }
 
@@ -51,7 +51,7 @@ resource "aws_apigatewayv2_route" "report_route_exact" {
 resource "aws_apigatewayv2_integration" "report_actuator_root" {
   api_id             = aws_apigatewayv2_api.http_api.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${aws_instance.app_server.public_ip}:8081/actuator"
+  integration_uri    = "http://${aws_eip.app_eip.public_ip}:8081/actuator"
   integration_method = "GET"
 }
 resource "aws_apigatewayv2_route" "report_actuator_root_route" {
@@ -64,7 +64,7 @@ resource "aws_apigatewayv2_route" "report_actuator_root_route" {
 resource "aws_apigatewayv2_integration" "report_actuator_health" {
   api_id             = aws_apigatewayv2_api.http_api.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${aws_instance.app_server.public_ip}:8081/actuator/health"
+  integration_uri    = "http://${aws_eip.app_eip.public_ip}:8081/actuator/health"
   integration_method = "GET"
 }
 resource "aws_apigatewayv2_route" "report_actuator_health_route" {
@@ -77,7 +77,7 @@ resource "aws_apigatewayv2_route" "report_actuator_health_route" {
 resource "aws_apigatewayv2_integration" "report_actuator_info" {
   api_id             = aws_apigatewayv2_api.http_api.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${aws_instance.app_server.public_ip}:8081/actuator/info"
+  integration_uri    = "http://${aws_eip.app_eip.public_ip}:8081/actuator/info"
   integration_method = "GET"
 }
 resource "aws_apigatewayv2_route" "report_actuator_info_route" {
@@ -90,7 +90,7 @@ resource "aws_apigatewayv2_route" "report_actuator_info_route" {
 resource "aws_apigatewayv2_integration" "report_actuator_metrics" {
   api_id             = aws_apigatewayv2_api.http_api.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${aws_instance.app_server.public_ip}:8081/actuator/metrics"
+  integration_uri    = "http://${aws_eip.app_eip.public_ip}:8081/actuator/metrics"
   integration_method = "GET"
 }
 resource "aws_apigatewayv2_route" "report_actuator_metrics_route" {
